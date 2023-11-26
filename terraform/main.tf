@@ -19,12 +19,14 @@ terraform {
 }
 
 provider "google" {
-  project = "training-394302"
-  region  = "asia-northeast1"
+  credentials = file("~/.config/gcloud/application_default_credentials.json")
+  project     = "training-394302"
+  region      = "asia-northeast1"
 }
 
 provider "google-beta" {
-  project = "training-394302"
-  region  = "asia-northeast1"
+  credentials = file("~/.config/gcloud/application_default_credentials.json")
+  project     = "training-394302"
+  region      = "asia-northeast1"
 }
 
