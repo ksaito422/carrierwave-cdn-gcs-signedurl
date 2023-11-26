@@ -46,6 +46,7 @@ gem "bootsnap", require: false
 
 gem 'pg'
 gem 'carrierwave'
+gem 'fog-google'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

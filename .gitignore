@@ -39,3 +39,5 @@ docker/db/
 
 terraform/.terraform/
 
+
+/config/credentials/production.key
