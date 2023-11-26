@@ -43,4 +43,49 @@ class AvatarUploader < CarrierWave::Uploader::Base
   # def filename
   #   "something.jpg" if original_filename
   # end
+
+  def expiring_url
+    object_url = get_object_url(url)
+    signed_url(object_url)
+  end
+
+  private
+
+  def get_object_url(url)
+    original_url = URI.parse(url)
+    object_path = original_url.path.gsub("/#{Rails.application.credentials.gcs_bucket}", '')
+
+    domain = image_domain
+    "#{domain[:protocol]}://#{domain[:host]}#{object_path}"
+  end
+
+  def image_domain
+    {
+      host: Rails.application.credentials.domain,
+      protocol: :http,
+    }
+  end
+
+  def signed_url(url)
+    key_name = Rails.application.credentials.gcs_signed_url_key_name
+    key = Rails.application.credentials.gcs_signed_url_key_value
+    expiration = Time.current+180.second
+
+    require 'base64'
+    require 'openssl'
+    require 'time'
+
+    decoded_key = Base64.urlsafe_decode64 key
+
+    expiration_utc = expiration.utc.to_i
+
+    separator = '?'
+
+    url = "#{url}#{separator}Expires=#{expiration_utc}&KeyName=#{key_name}"
+
+    signature = OpenSSL::HMAC.digest 'SHA1', decoded_key, url
+    encoded_signature = Base64.urlsafe_encode64 signature
+
+    "#{url}&Signature=#{encoded_signature}"
+  end
 end
